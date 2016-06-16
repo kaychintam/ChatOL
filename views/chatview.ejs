@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Chat OL</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="/css/contact_list.css">
+    <link rel="stylesheet" href="/css/chat_box.css">
+    <link rel="stylesheet" href="/css/context.standalone.css">
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1>CHAT OL
+        </h1>
+    </div>
+
+    <div class="row clearfix" height="100%">
+        <div class="col-md-4 column">
+
+
+
+            <div class="contact-panel">
+                <div class="panel-heading c-list">
+                    <span class="title">CONTACTS</span>
+                    <ul class="pull-right c-controls">
+                        <li><a href="#cant-do-all-the-work-for-you" data-toggle="tooltip" data-placement="top" title="" class="tooltip-f"><i class="glyphicon glyphicon-plus"></i></a></li>
+                        <li><a href="#" class="hide-search tooltip-f" data-command="toggle-search" data-toggle="tooltip" data-placement="top" title=""><i class="glyphicon glyphicon-search"></i></a></li>
+                        <li><a href="#log-out" class="tooltip-f" title="" data-toggle="tooltip"><i class="glyphicon glyphicon-log-out"></i></a></li>
+                    </ul>
+                </div>
+
+                <div class="row" style="display: none;">
+                    <div class="col-xs-12">
+                        <div class="input-group c-search">
+                            <input type="text" class="form-control" id="contact-list-search">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search text-muted"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <div class="panel-group groups" id="panel-9875">
+                            <div class="panel panel-default group-panel 123" name="">
+                                <div class="panel-heading group-heading">
+                                    <a class="panel-title group_name" data-toggle="collapse" href="#123" style="text-decoration: none">123</a>
+                                </div>
+                                <div id="123" class="panel-collapse collapse in">
+                                    <!--<ul class="list-group contacts" id="contact-list">-->
+                                    <ul class="list-group contacts">
+                                        <li class="list-group-item">
+                                            <div class="col-xs-12 col-sm-3">
+                                                <img src="/img/1_copy.jpg" alt="default" class="img-responsive img-circle">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-9">
+                                                <span class="name">222222222</span><br>
+                                                <span class="glyphicon glyphicon-pencil text-muted c-info edit tooltip-f" data-toggle="tooltip" title=""></span>
+                                                <span class="glyphicon glyphicon-trash text-muted c-info delete tooltip-f" data-toggle="tooltip" title=""></span>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <ul class="list-group contacts" id="contact-list"></ul>
+            </div>
+
+            <!--<div class="contact_template">-->
+                <!--<li class="list-group-item">-->
+                    <!--<div class="col-xs-12 col-sm-3">-->
+                        <!--<img src="/img/default_avatar.gif" alt="default" class="img-responsive img-circle">-->
+                    <!--</div>-->
+                    <!--<div class="col-xs-12 col-sm-9">-->
+                        <!--<span class="name">abc</span><br>-->
+                        <!--<span class="glyphicon glyphicon-map-marker text-muted c-info tooltip-f" data-toggle="tooltip" title=""></span>-->
+                        <!--<span class="visible-xs"> <span class="text-muted">5020 Poplar Dr</span><br></span>-->
+                        <!--<span class="glyphicon glyphicon-earphone text-muted c-info tooltip-f" data-toggle="tooltip" title=""></span>-->
+                        <!--<span class="visible-xs"> <span class="text-muted">(538) 718-7548</span><br></span>-->
+                        <!--<span class="glyphicon glyphicon-envelope text-muted c-info tooltip-f" data-toggle="tooltip" title=""></span>-->
+                        <!--<span class="visible-xs"> <span class="text-muted">glenda.patterson@example.com</span><br></span>-->
+                        <!--<span class="glyphicon glyphicon-trash text-muted c-info delete tooltip-f" data-toggle="tooltip" title=""></span>-->
+                    <!--</div>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</li>-->
+            <!--</div>-->
+
+            <!--<div class="group_template">-->
+                <!--<div class="panel panel-default group-panel" name="">-->
+                    <!--<div class="panel-heading group-heading">-->
+                        <!--<a class="panel-title group_name" data-toggle="collapse" href="">Group 2</a>-->
+                    <!--</div>-->
+                    <!--<div id="" class="panel-collapse collapse">-->
+                        <!--<ul class="list-group contacts" id="contact-list"></ul>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div id="cant-do-all-the-work-for-you" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"
+                 aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="mySmallModalLabel">Add Contact</h4>
+                        </div>
+                        <div class="modal-body">
+
+
+                            <div class="form-group">
+                                <label for="inputContactName">Contact</label>
+                                <input type="username" class="form-control" id="inputContactName"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputContactGroup">Group</label>
+                                <input type="group" class="form-control" id="inputContactGroup"/>
+                            </div>
+
+                            <button type="submit" class="btn btn-default" id="addContactBtn">Submit</button>
+                        </div>
+                        <div class="modal-footer">
+                            <span id="contact_msg"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-8 column">
+
+            <div class="chat_window">
+                <div class="top_menu">
+                    <!--<div class="buttons">-->
+                        <!--<div class="button close"></div>-->
+                        <!--<div class="button minimize"></div>-->
+                        <!--<div class="button maximize"></div>-->
+                    <!--</div>-->
+                    <div class="title">Hello</div>
+                </div>
+                <ul class="messages">
+                    <li class="message left appeared">
+                        <div class="avatar"></div>
+                        <div class="text_wrapper">
+                            <div class="text">How are you?</div>
+                        </div>
+                    </li>
+                    <li class="message right appeared">
+                        <div class="avatar"></div>
+                        <div class="text_wrapper">
+                            <div class="text">Fine!</div>
+                        </div>
+                    </li>
+                    <li class="message left appeared">
+                        <div class="avatar"></div>
+                        <div class="text_wrapper">
+                            <div class="text">Chat OL is good!</div>
+                        </div>
+                    </li>
+                    <li class="message right appeared">
+                        <div class="avatar"></div>
+                        <div class="text_wrapper">
+                            <div class="text">I agree.</div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="bottom_wrapper clearfix">
+                    <div class="message_input_wrapper">
+                        <input class="message_input" placeholder="Type your message here..."></div>
+                    <div class="send_message">
+                        <div class="icon"></div>
+                        <div class="text">Send</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message_template">
+                <li class="message">
+                    <div class="avatar"></div>
+                    <div class="text_wrapper">
+                        <div class="text"></div>
+                    </div>
+                </li>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script src="/js/jquery-2.2.4.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.searchable-1.0.0.min.js"></script>
+<script src="/js/jquery.easyui.min.js"></script>
+<script src="/js/chat_box.js"></script>
+<script src="/js/contact_box.js"></script>
+<script src="/js/context.js"></script>
+
+</body>
+
+</html>
+

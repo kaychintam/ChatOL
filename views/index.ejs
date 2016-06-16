@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Chat OL</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="/css/reset.css"/>
+    <link rel="stylesheet" href="/css/style_index.css"/>
+
+    <script src="/js/jquery-2.2.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+    <script src="/js/md5.js"> </script>
+    <script src="/js/index.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="info">
+            <h1>Chat OL</h1>
+            <span>C'est la vie</span>
+        </div>
+    </div>
+
+<div class="form">
+
+    <form class="register-form" method="post" action="/register" id="register-form">
+
+        <input type="text" placeholder="username" name="user"/>
+
+        <input type="password" placeholder="password" name="password" data-type="password" id="password"/>
+
+        <input type="password" placeholder="confirm password" name="confirmpassword" data-type="password"/>
+
+        <input type="text" placeholder="email address" name="email"/>
+
+        <input type="submit" class="button"  value="create"/>
+
+        <p class="message">Having an account <a href="#">Sign In</a></p>
+
+    </form>
+
+
+    <div id="login-error" style="font-size: small; color: red;"> </div>
+    <form class="login-form" method="post" action="/login" id="login-form">
+
+        <input type="text" placeholder="username" name="user"/>
+
+        <input type="password" placeholder="password" name="password"/>
+
+        <input type="submit" class="button" value="login"/>
+
+        <p class="message">Go get an account <a href="#">Sign Up</a></p>
+
+    </form>
+
+
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="info">
+            <span><a href="#">Petertam</a></span>
+        </div>
+    </div>
+</footer>
+
+</body>
+
+</html>
