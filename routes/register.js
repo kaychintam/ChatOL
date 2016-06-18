@@ -18,7 +18,6 @@ module.exports = function (req,res,next) {
             console.log(req.body);
             var name = req.body.user;
             var email = req.body.email;
-            //   var nowTime = new moment;
             var password = req.body.password;
             var verified = 'false';
             var verificationcode = uuid.v1();
@@ -45,7 +44,8 @@ module.exports = function (req,res,next) {
                 res.end("Create Group Err!");
                 return;
             })
-            sendmail(email,"<a href='http://10.180.77.12:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>go activation</a>");
+            sendmail(email,"<a href='http://10.180.28.116:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>Please click this to complete register.</a>");
+            // res.render("status", {status:"You Successfully Registered. Check Your Email To Verify"});
             res.send("{msg:'success'}");
         }
     });

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var db = mongoose.connect('mongodb://localhost:27017/OICQ');
+var db = mongoose.connect('mongodb://localhost:27017/ChatOL');
 
 var schema = mongoose.Schema;
 var userschema = new schema({
@@ -21,9 +21,27 @@ var groupschema = new schema({
     member:String,
     email:String
 });
+var requestschema = new schema({
+    sender:String,
+    receiver:String,
+    groupname:String
+});
+var responseschema = new schema({
+    sender:String,
+    receiver:String,
+    groupname:String,
+    request:{
+        sender:String,
+        receiver:String,
+        groupname:String
+    },
+    res:String
+});
 var user = mongoose.model('user',userschema);
 var message = mongoose.model('message',messageschema);
 var group = mongoose.model('group',groupschema);
+var request = mongoose.model('request',requestschema);
+var response = mongoose.model('response',responseschema);
 
 function savemessage(msg) {
     var nmsg = new message({
@@ -33,9 +51,59 @@ function savemessage(msg) {
         timestamp:msg.timestamp
     });
     nmsg.save(function(err) {
-        console.log(err);
-        console.log("save msg Err!");
+        if(err!=null) {
+            console.log(err);
+            console.log("save msg Err!");
+        }
         return;
+    });
+}
+
+function savegroup(grp) {
+    var ngrp = new group({
+        owner:grp.owner,
+        name:grp.name,
+        member:grp.member,
+        email:grp.email
+    });
+    ngrp.save(function(err) {
+        if(err!=null) {
+            console.log(err);
+            console.log("save group Err!");
+            return;
+        }
+    });
+}
+
+function saverequest(rqst) {
+    var nrqst = new request({
+        sender:rqst.sender,
+        receiver:rqst.receiver,
+        groupname:rqst.groupname
+    });
+    nrqst.save(function(err) {
+        if(err!=null) {
+            console.log(err);
+            console.log("save rquest Err!");
+            return;
+        }
+    });
+}
+
+function saveresponse(rsps) {
+    var nrsps = new response({
+        sender:rsps.sender,
+        receiver:rsps.receiver,
+        groupname:rsps.groupname,
+        request:rsps.request,
+        res:rsps.res
+    });
+    nrsps.save(function(err) {
+        if(err!=null) {
+            console.log(err);
+            console.log("save response Err!");
+            return;
+        }
     });
 }
 
@@ -46,4 +114,10 @@ exports.groupschema = groupschema;
 exports.user = user;
 exports.message = message;
 exports.group = group;
+exports.request = request;
+exports.response = response;
+
 exports.savemessage = savemessage;
+exports.savegroup = savegroup;
+exports.saverequest = saverequest;
+exports.saveresponse = saveresponse;

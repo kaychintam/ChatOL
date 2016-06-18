@@ -49,13 +49,16 @@ $(document).ready(function() {
                         password:password
                     },
                     error:function (a,b,c) {
-                        alert("time out");
+                        // $('#reg_message').html("Error");
+                        // $('#reg_result').modal('show');
+                        alert('time out');
                     },
                     success:function(json) {
                         var data = eval('('+json+')');
                         if(data && data.msg == 'success') {
-                            alert('Success!');
-                            window.location.href = '/';
+                           //$.post()
+                            alert('Successfully Registered!');
+                            window.href = '/'
                         }
                     }
                 });

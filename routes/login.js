@@ -1,6 +1,3 @@
-/**
- * Created by drinkingcoder on 16/6/3.
- */
 var db = require("./db");
 var express = require('express');
 var router = express.Router();
@@ -23,6 +20,7 @@ module.exports = function (req,res,next) {
         } else {
                 req.session.logged_in = true;
                 req.session.name = users.name;
+                req.session.email = users.email;
                 global.online[users.name] = true;
                 res.send("{msg:'success'}");
         }

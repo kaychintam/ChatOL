@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fuck</title>
+    <link rel="stylesheet" type="text/css" href="/css/lazeemenu.css">
+    <link rel="stylesheet" type="text/css" href="/css/chatstyle.css" />
+    <script type="text/javascript">
+        function SendMessage() {
+            if((typeof  messages[currentname]) == "undefined") messages[currentname] = [];
+            var currentmessage =
+            {
+                'sender':myname,
+                'receiver':currentname,
+                'type':'send',
+                'content':$('#sendmessage input').val(),
+                'timestamp':(new Date()).getHours().toString()+':'+(new Date()).getMinutes().toString()+':'+(new Date()).getSeconds().toString()
+            };
+            socket.emit('sendmessage', currentmessage);
+            messages[currentmessage.receiver].push(currentmessage);
+        }
+        function CheckSendMessageKey(event) {
+            if(event.keyCode == 13) {
+                SendMessage();
+            }
+        }
+        function  Search() {
+            var request =
+            {
+                sender:myname,
+                receiver:$('#search input').val(),
+                groupname:"My Friend"
+            };
+            request.groupname = prompt("Group Name:","");
+            socket.emit('friendrequest',request);
+        }
+        function CheckSearchKey(event) {
+            if(event.keyCode == 13) {
+                Search();
+            }
+        }
+        function SolveRequest(request) {
+            var response = {
+                sender:request.receiver,
+                receiver:request.sender,
+                request:JSON.parse(JSON.stringify(request)),
+                groupname:"",
+                res:""
+            };
+            if(confirm("Add Friend:"+request.sender+"?")) {
+                response.groupname = prompt("Group Name:","");
+                response.res = "accept";
+            } else {
+                alert("Reject!");
+                response.res = "reject";
+            }
+            socket.emit("friendresponse",response);
+        }
+        function SolveResponse(response) {
+            if(response.res == "accept") {
+                alert("Add Friend:" + response.request.receiver + " into group: " + response.request.groupname + " successfully!");
+            } else {
+                alert(response.request.receiver + " reject your request. ");
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div id="chatbox">
+    <div id="friendslist">
+        <div id="topmenu">
+            <span class="friends"></span>
+        </div>
+        <div id="friends">
+            <ul id="menu">
+            </ul>
+        </div>
+
+        <div id="search">
+            <input type="text" id="searchfield" value="Search contacts..." onkeypress="CheckSearchKey(event)"/>
+        </div>
+    </div>
+
+    <div id="chatview" class="p1">
+        <div id="profile">
+
+            <div id="close">
+                <div class="cy"></div>
+                <div class="cx"></div>
+            </div>
+
+            <p>Miro Badev</p>
+            <span>miro@badev@gmail.com</span>
+        </div>
+        <div id="chat-messages">
+            <label>Thursday 02</label>
+
+        </div>
+
+        <div id="sendmessage">
+            <input type="text" value="Send message..." onkeypress="CheckSendMessageKey(event)"/>
+            <button id="send"></button>
+        </div>
+
+    </div>
+</div>
+<script src="/javascripts/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/javascripts/lazeemenu-jquery.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    var messages;
+    var currentname;
+    var socket = io.connect();
+    var myname = window.location.href.split('/')[4];
+    var groups;
+    socket.on('connect', function () {
+        socket.emit('applydata',myname);
+    });
+    socket.on('friendrequest',function (data) {
+        SolveRequest(data);
+        window.location.reload();
+    });
+    socket.on('friendresponse',function (data) {
+        SolveResponse(data);
+        window.location.reload();
+    });
+    socket.on('deletefriend',function(data) {
+        window.location.reload();
+    });
+    function RefreshFriends(group) {
+        $('#menu').children('li').remove();
+        for(var groupname in group){
+            var thisgroup = $("<li></li>").append(
+                    $("<h3></h3>").append($("<span></span>").text(groupname))
+            );
+            var tmp = $('<ul></ul>');
+            for(var friend in group[groupname]) {
+                var image = $('<img src="/img/4_copy.jpg" />');
+
+                var p = $('<p></p>');
+                var name = $('<strong></strong>').text(friend);
+                var email = $('<span></span>').text(group[groupname][friend].email);
+                p = p.append(name).append(email);
+
+                var online;
+                online = $('<div class="status active" id="delfriend"></div>');
+                var li = $('<li></li>');
+                var div = $('<div class="friend"></div>');
+                div = div.append(image).append(p).append(online);
+                li = li.append(div);
+                tmp = tmp.append(li);
+            }
+            thisgroup = thisgroup.append(tmp);
+            $('#menu').append(thisgroup);
+        }
+    }
+    $(document).ready(function() {
+        socket.on('message',function (msg) {
+            var img;
+            var div;
+            var name;
+            if(msg.sender == myname) {
+                div = $("<div class='message right'></div>");
+                name = msg.receiver;
+            } else {
+                div = $("<div class='message'></div>");
+                name = msg.sender;
+            }
+            img = $('<img src="/img/1_copy.jpg" />');
+            var content = $('<div class="bubble"></div>').append(msg.content).append($(' <div class="corner"></div>'));
+            var span = $('<span></span>').text(msg.timestamp);
+            content = content.append(span);
+            $('#chat-messages').append(div.append(img).append(content));
+            $('#chat-messages').scrollTop(1000000);
+            $('#sendmessage input').val('');
+            messages[msg.sender].push(msg);
+        });
+        socket.on('data',function (data) {
+            messages = JSON.parse(JSON.stringify(data.messages));
+            groups = JSON.parse(JSON.stringify(data.group));
+            console.log(groups);
+            for(var i in data.request) {
+                SolveRequest(data.request[i]);
+            }
+            for(var i in data.response) {
+                SolveResponse(data.response[i]);
+            }
+            RefreshFriends(groups);
+            $('#menu').lazeemenu();
+            var preloadbg = document.createElement('img');
+            preloadbg.src = '/img/timeline1.png';
+            $('#searchfield').focus(function () {
+                if ($(this).val() == 'Search contacts...') {
+                    $(this).val('');
+                }
+            });
+            $('#searchfield').focusout(function () {
+                if ($(this).val() == '') {
+                    $(this).val('Search contacts...');
+                }
+            });
+            $('#sendmessage input').focus(function () {
+                if ($(this).val() == 'Send message...') {
+                    $(this).val('');
+                }
+            });
+            $('#sendmessage input').focusout(function () {
+                if ($(this).val() == '') {
+                    $(this).val('Send message...');
+                }
+            });
+            $('#send').click(SendMessage);
+            $('.friend').each(function () {
+                $(this).find('div').click(function (){
+                    var name = $(this).siblings().find($('strong')).text();
+                    if(confirm('Delete Friend: '+name+' ?')) {
+                        socket.emit('deletefriend',{sender:myname,receiver:name});
+                    }
+                });
+                $(this).find('p').click(function (){
+                    var childOffset = $(this).parent().offset();
+                    var parentOffset = $(this).parent().parent().parent().offset();
+                    var childTop = childOffset.top - parentOffset.top;
+                    var clone = $(this).parent().find('img').eq(0).clone();
+                    var top = childTop + 12 + 'px';
+                    var name = $(this).parent().find('p strong').html();
+                    var email = $(this).parent().find('p span').html();
+                    if(name != currentname) {
+                        $('#chat-messages').children('div').remove();
+                        currentname = name;
+                        for (var msg in messages[name]) {
+                            var img;
+                            var div;
+                            if (messages[name][msg].receiver == myname) {
+                                div = $("<div class='message'></div>");
+                                img = $('<img src="/img/2_copy.jpg" />');
+                            } else {
+                                div = $("<div class='message right'></div>");
+                                img = $('<img src="/img/1_copy.jpg" />');
+                            }
+                            var content = $('<div class="bubble"></div>').append(messages[name][msg].content).append($(' <div class="corner"></div>'));
+                            var span = $('<span></span>').text(messages[name][msg].timestamp);
+                            content = content.append(span);
+                            $('#chat-messages').append(div.append(img).append(content));
+                        }
+                    }
+                    $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
+                    setTimeout(function () {
+                        $('#profile p').addClass('animate');
+                        $('#profile').addClass('animate');
+                    }, 100);
+                    setTimeout(function () {
+                        $('#chat-messages').addClass('animate');
+                        $('.cx, .cy').addClass('s1');
+                        setTimeout(function () {
+                            $('.cx, .cy').addClass('s2');
+                        }, 100);
+                        setTimeout(function () {
+                            $('.cx, .cy').addClass('s3');
+                        }, 200);
+                    }, 150);
+                    $('.floatingImg').animate({
+                        'width': '68px',
+                        'left': '108px',
+                        'top': '20px'
+                    }, 200);
+
+                    $('#profile p').html(name);
+                    $('#profile span').html(email);
+                    $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
+                    $('#friendslist').fadeOut();
+                    $('#chatview').fadeIn();
+                    $('#close').unbind('click').click(function () {
+                        $('#chat-messages, #profile, #profile p').removeClass('animate');
+                        $('.cx, .cy').removeClass('s1 s2 s3');
+                        $('.floatingImg').animate({
+                            'width': '40px',
+                            'top': top,
+                            'left': '12px'
+                        }, 200, function () {
+                            $('.floatingImg').remove();
+                        });
+                        setTimeout(function () {
+                            $('#chatview').fadeOut();
+                            $('#friendslist').fadeIn();
+                        }, 50);
+                    });
+                });
+                $(this).find('img').click(function () {
+                    var childOffset = $(this).parent().offset();
+                    var parentOffset = $(this).parent().parent().parent().offset();
+                    var childTop = childOffset.top - parentOffset.top;
+                    var clone = $(this).parent().find('img').eq(0).clone();
+                    var top = childTop + 12 + 'px';
+                    var name = $(this).parent().find('p strong').html();
+                    var email = $(this).parent().find('p span').html();
+                    if(name != currentname) {
+                        $('#chat-messages').children('div').remove();
+                        currentname = name;
+                        for (var msg in messages[name]) {
+                            var img;
+                            var div;
+                            if (messages[name][msg].receiver == myname) {
+                                div = $("<div class='message'></div>");
+                                img = $('<img src="/img/2_copy.jpg" />');
+                            } else {
+                                div = $("<div class='message right'></div>");
+                                img = $('<img src="/img/1_copy.jpg" />');
+                            }
+                            var content = $('<div class="bubble"></div>').append(messages[name][msg].content).append($(' <div class="corner"></div>'));
+                            var span = $('<span></span>').text(messages[name][msg].timestamp);
+                            content = content.append(span);
+                            $('#chat-messages').append(div.append(img).append(content));
+                        }
+                    }
+                    $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
+                    setTimeout(function () {
+                        $('#profile p').addClass('animate');
+                        $('#profile').addClass('animate');
+                    }, 100);
+                    setTimeout(function () {
+                        $('#chat-messages').addClass('animate');
+                        $('.cx, .cy').addClass('s1');
+                        setTimeout(function () {
+                            $('.cx, .cy').addClass('s2');
+                        }, 100);
+                        setTimeout(function () {
+                            $('.cx, .cy').addClass('s3');
+                        }, 200);
+                    }, 150);
+                    $('.floatingImg').animate({
+                        'width': '68px',
+                        'left': '108px',
+                        'top': '20px'
+                    }, 200);
+
+                    $('#profile p').html(name);
+                    $('#profile span').html(email);
+                    $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
+                    $('#friendslist').fadeOut();
+                    $('#chatview').fadeIn();
+                    $('#close').unbind('click').click(function () {
+                        $('#chat-messages, #profile, #profile p').removeClass('animate');
+                        $('.cx, .cy').removeClass('s1 s2 s3');
+                        $('.floatingImg').animate({
+                            'width': '40px',
+                            'top': top,
+                            'left': '12px'
+                        }, 200, function () {
+                            $('.floatingImg').remove();
+                        });
+                        setTimeout(function () {
+                            $('#chatview').fadeOut();
+                            $('#friendslist').fadeIn();
+                        }, 50);
+                    });
+                });
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

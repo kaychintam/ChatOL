@@ -5,6 +5,8 @@ var messages;
 var currentname;
 var socket = io.connect();
 var myname = window.location.href.split('/')[4];
+var response;
+var request;
 
 socket.on('connect', function () {
     socket.emit('applydata',myname);
@@ -14,57 +16,33 @@ function removeAllSpace(str) {
     return str.replace(/\s+/g, "");
 }
 
+function SolveRequest(request) {
+    response = {
+        sender : request.receiver,
+        receiver : request.sender,
+        sendergroup : request.groupname,
+        receivergroup : "",
+        res : ""
+    };
+
+    $('#acceptUserName').val(request.sender);
+    $('#receive-a-request').modal('show');
+}
+
+function SolveResponse(response) {
+    $('#get_response').modal('show');
+}
+
 $(document).ready(function() {
 
-    $('a[href="#cant-do-all-the-work-for-you"]').on('click', function (event) {
-        event.preventDefault();
-        $('#cant-do-all-the-work-for-you').modal('show');
-    })
-
-    $('[data-command="toggle-search"]').on('click', function (event) {
-        event.preventDefault();
-        $(this).toggleClass('hide-search');
-
-        if ($(this).hasClass('hide-search')) {
-            $('.c-search').closest('.row').slideUp(100);
-        } else {
-            $('.c-search').closest('.row').slideDown(100);
-        }
-    })
-
-    $('#contact-list').searchable({
-        searchField: '#contact-list-search',
-        selector: 'li',
-        childSelector: '.col-xs-12',
-        show: function (elem) {
-            elem.slideDown(100);
-        },
-        hide: function (elem) {
-            elem.slideUp(100);
-        }
-    })
-
-
-    socket.on('message',function (msg) {
-        var img;
-        var div;
-        var name;
-        if(msg.sender == myname) {
-            div = $("<div class='message right'></div>");
-            name = msg.receiver;
-        } else {
-            div = $("<div class='message'></div>");
-            name = msg.sender;
-        }
-        img = $('<img src="/img/1_copy.jpg" />');
-        var content = $('<div class="bubble"></div>').append(msg.content).append($(' <div class="corner"></div>'));
-        var span = $('<span></span>').text(msg.timestamp);
-        content = content.append(span);
-        $('#chat-messages').append(div.append(img).append(content));
-        $('#chat-messages').scrollTop(1000000);
-        $('#sendmessage input').val('');
-        messages[msg.sender].push(msg);
+    socket.on('friendrequest',function (data) {
+        SolveRequest(data);
     });
+
+    socket.on('friendresponse',function (data) {
+        SolveResponse(data);
+    });
+
     socket.on('data',function (data) {
         messages = JSON.parse(JSON.stringify(data.messages));
         for(var groupname in data.group) {
@@ -106,113 +84,123 @@ $(document).ready(function() {
             $('#panel-9875').append(panel);
         }
 
-        // var preloadbg = document.createElement('img');
-        // preloadbg.src = '/img/timeline1.png';
-        // $('#searchfield').focus(function () {
-        //     if ($(this).val() == 'Search contacts...') {
-        //         $(this).val('');
-        //     }
-        // });
-        // $('#searchfield').focusout(function () {
-        //     if ($(this).val() == '') {
-        //         $(this).val('Search contacts...');
-        //     }
-        // });
-        // $('#sendmessage input').focus(function () {
-        //     if ($(this).val() == 'Send message...') {
-        //         $(this).val('');
-        //     }
-        // });
-        // $('#sendmessage input').focusout(function () {
-        //     if ($(this).val() == '') {
-        //         $(this).val('Send message...');
-        //     }
-        // });
-        $('#send').click(function () {
-            alert('clicked!');
+        $('.send_message').click(function () {
             if((typeof  messages[currentname]) == "undefined") messages[currentname] = [];
             var currentmessage =
             {
                 'sender':myname,
                 'receiver':currentname,
                 'type':'send',
-                'content':$('#sendmessage input').val(),
+                'content':$('.message_input').val(),
                 'timestamp':(new Date()).getHours().toString()+':'+(new Date()).getMinutes().toString()+':'+(new Date()).getSeconds().toString()
             };
             socket.emit('sendmessage', currentmessage);
             messages[currentmessage.receiver].push(currentmessage);
         });
-        // $('.friend').each(function () {
-        //     $(this).click(function () {
-        //         var childOffset = $(this).offset();
-        //         var parentOffset = $(this).parent().parent().offset();
-        //         var childTop = childOffset.top - parentOffset.top;
-        //         var clone = $(this).find('img').eq(0).clone();
-        //         var top = childTop + 12 + 'px';
-        //         var name = $(this).find('p strong').html();
-        //         var email = $(this).find('p span').html();
-        //         if(name != currentname) {
-        //             $('#chat-messages').children('div').remove();
-        //             currentname = name;
-        //             for (var msg in messages[name]) {
-        //                 var img;
-        //                 var div;
-        //                 if (messages[name][msg].receiver == myname) {
-        //                     div = $("<div class='message'></div>");
-        //                     img = $('<img src="/img/2_copy.jpg" />');
-        //                 } else {
-        //                     div = $("<div class='message right'></div>");
-        //                     img = $('<img src="/img/1_copy.jpg" />');
-        //                 }
-        //                 var content = $('<div class="bubble"></div>').append(messages[name][msg].content).append($(' <div class="corner"></div>'));
-        //                 var span = $('<span></span>').text(messages[name][msg].timestamp);
-        //                 content = content.append(span);
-        //                 $('#chat-messages').append(div.append(img).append(content));
-        //             }
-        //         }
-        //         $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
-        //         setTimeout(function () {
-        //             $('#profile p').addClass('animate');
-        //             $('#profile').addClass('animate');
-        //         }, 100);
-        //         setTimeout(function () {
-        //             $('#chat-messages').addClass('animate');
-        //             $('.cx, .cy').addClass('s1');
-        //             setTimeout(function () {
-        //                 $('.cx, .cy').addClass('s2');
-        //             }, 100);
-        //             setTimeout(function () {
-        //                 $('.cx, .cy').addClass('s3');
-        //             }, 200);
-        //         }, 150);
-        //         $('.floatingImg').animate({
-        //             'width': '68px',
-        //             'left': '108px',
-        //             'top': '20px'
-        //         }, 200);
-        //
-        //         $('#profile p').html(name);
-        //         $('#profile span').html(email);
-        //         $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
-        //         $('#friendslist').fadeOut();
-        //         $('#chatview').fadeIn();
-        //         $('#close').unbind('click').click(function () {
-        //             $('#chat-messages, #profile, #profile p').removeClass('animate');
-        //             $('.cx, .cy').removeClass('s1 s2 s3');
-        //             $('.floatingImg').animate({
-        //                 'width': '40px',
-        //                 'top': top,
-        //                 'left': '12px'
-        //             }, 200, function () {
-        //                 $('.floatingImg').remove();
-        //             });
-        //             setTimeout(function () {
-        //                 $('#chatview').fadeOut();
-        //                 $('#friendslist').fadeIn();
-        //             }, 50);
-        //         });
-        //     });
-        //});
+
+        $('span.name').each(function () {
+            $(this).click(function () {
+                var name = $(this).text();
+                if (name != currentname) {
+                    currentname = name;
+                    $('.chat_window').hide();
+                    $('.messages').html("");
+                    $('.top_menu .title').text(currentname);
+                    $('.chat_window').show(500);
+                    for (var msg in messages[name]) {
+                        var msgbox = $('.messages');
+                        if (messages[name][msg].receiver == myname) {
+                            var msg = $('<li class="message left appeared"></li>')
+                                .append($('<div class="avatar"></div>'));
+                            var wra = $('<div class="text_wrapper"></div>').append($('<div class="text">' + messages[name][msg].content + '</div>'));
+                            msg.append(wra);
+                            msgbox.append(msg);
+                        } else {
+                            var msg = $('<li class="message right appeared"></li>')
+                                .append($('<div class="avatar"></div>'));
+                            var wra = $('<div class="text_wrapper"></div>').append($('<div class="text">' + messages[name][msg].content + '</div>'));
+                            msg.append(wra);
+                            msgbox.append(msg);
+                        }
+                    }
+                }
+            });
+        });
+
+        $('#accept-adding').click(function () {
+            response.receivergroup = $('#acceptGroupName').val();
+            response.res = "accept";
+            if (response.receivergroup) {
+                socket.emit("friendresponse", response);
+            }
+            window.location.reload();
+        });
+
+        $('#reject-adding').click(function () {
+            response.receivergroup = $('#acceptGroupName').val();
+            response.res = "reject";
+            socket.emit("friendresponse", response);
+            window.location.reload();
+        });
+
+        $('a[href="#add-a-contact"]').on('click', function (event) {
+            event.preventDefault();
+            $('#add-a-contact').modal('show');
+        });
+
+        $('[data-command="toggle-search"]').on('click', function (event) {
+            event.preventDefault();
+            $(this).toggleClass('hide-search');
+
+            if ($(this).hasClass('hide-search')) {
+                $('.c-search').closest('.row').slideUp(100);
+            } else {
+                $('.c-search').closest('.row').slideDown(100);
+            }
+        });
+
+        $('#contact-list').searchable({
+            searchField: '#contact-list-search',
+            selector: 'li',
+            childSelector: '.col-xs-12',
+            show: function (elem) {
+                elem.slideDown(100);
+            },
+            hide: function (elem) {
+                elem.slideUp(100);
+            }
+        });
+
+        $('#submit-adding').click(function () {
+            request =
+            {
+                sender: myname,
+                receiver: $('#inputUserName').val(),
+                groupname: $('#inputUserGroup').val()
+            };
+            if (request.sender == request.receiver) return;
+            socket.emit('friendrequest', request);
+        });
+
+        socket.on('message',function (newmsg) {
+            var msgbox = $('.messages');
+            if (newmsg.sender == myname) {
+                var msg = $('<li class="message right appeared"></li>')
+                    .append($('<div class="avatar"></div>'));
+                var wra = $('<div class="text_wrapper"></div>').append($('<div class="text">'+newmsg.content+'</div>'));
+                msg.append(wra);
+                msgbox.append(msg);
+            } else {
+                var msg = $('<li class="message left appeared"></li>')
+                    .append($('<div class="avatar"></div>'));
+                var wra = $('<div class="text_wrapper"></div>').append($('<div class="text">'+newmsg.content+'</div>'));
+                msg.append(wra);
+                msgbox.append(msg);
+            }
+            messages[newmsg.sender].push(newmsg);
+            $('.messages').scrollTop(1000000);
+        });
+
     });
 
 });

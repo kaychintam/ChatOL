@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Chat OL</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" >
+
+    <script src="/js/jquery-2.2.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+
+    <div class="container">
+        <div class="page-header">
+            <h1>CHAT OL   <small class="text-center">Status</small></h1>
+        </div>
+
+        <% if (status) { %>
+
+        <div class="row" style="height:200px;">
+            <div style="top: 30%; position: relative">
+                <p class="text-center">
+                    <strong><%= status%></strong>
+                </p>
+            </div>
+        </div>
+
+        <% } %>
+
+        <div class="modal-footer">
+            <p class="text-center">
+                <a href="/" style="text-decoration: none">Home</a>
+            </p>
+        </div>
+
+    </div>
+
+</head>

@@ -26,5 +26,5 @@ module.exports = function (req,res,next){
         return;
     }
 
-    res.render('chatview');
+    res.render('chatview',{username:req.session.name, useremail:req.session.email});
 }

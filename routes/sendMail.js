@@ -13,9 +13,9 @@ module.exports =  function (email,content) {
         }
     });
     var mailOption = {
-        from: 'OICQ <xs6666@qq.com>',
+        from: 'Chat OL <xs6666@qq.com>',
         to:email,
-        subject:'OICQ Register Information',
+        subject:'Chat OL Verification Detail',
         html:content
     };
     transporter.sendMail(mailOption, function(err,info){
