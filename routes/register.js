@@ -44,8 +44,9 @@ module.exports = function (req,res,next) {
                 res.end("Create Group Err!");
                 return;
             })
-            sendmail(email,"<a href='http://10.180.28.116:3000/activation?name="+name+"&verificationcode="+verificationcode+ "'>Please click this to complete register.</a>");
-            // res.render("status", {status:"You Successfully Registered. Check Your Email To Verify"});
+            sendmail(email,"<a href='http://10.180.28.116:3000/activation?name="+
+                name+"&verificationcode="+verificationcode +
+                "'>Please click this to complete register.</a>");
             res.send("{msg:'success'}");
         }
     });

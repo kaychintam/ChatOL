@@ -7,6 +7,7 @@ var socket = io.connect();
 var myname = window.location.href.split('/')[4];
 var response;
 var request;
+var first = 0;
 
 socket.on('connect', function () {
     socket.emit('applydata',myname);
@@ -30,6 +31,11 @@ function SolveRequest(request) {
 }
 
 function SolveResponse(response) {
+    if (response.res == "accept") {
+        $('#response_res').html('You requst is accepted.');
+    } else {
+        $('#response_res').html('You requst is rejected.');
+    }
     $('#get_response').modal('show');
 }
 
@@ -41,6 +47,10 @@ $(document).ready(function() {
 
     socket.on('friendresponse',function (data) {
         SolveResponse(data);
+    });
+
+    socket.on('deletefriend',function(data) {
+        window.location.reload();
     });
 
     socket.on('data',function (data) {
@@ -85,7 +95,8 @@ $(document).ready(function() {
         }
 
         $('.send_message').click(function () {
-            if((typeof  messages[currentname]) == "undefined") messages[currentname] = [];
+
+            if((typeof messages[currentname]) == "undefined") messages[currentname] = [];
             var currentmessage =
             {
                 'sender':myname,
@@ -96,6 +107,7 @@ $(document).ready(function() {
             };
             socket.emit('sendmessage', currentmessage);
             messages[currentmessage.receiver].push(currentmessage);
+            $('.message_input').val('');
         });
 
         $('span.name').each(function () {
@@ -104,7 +116,7 @@ $(document).ready(function() {
                 if (name != currentname) {
                     currentname = name;
                     $('.chat_window').hide();
-                    $('.messages').html("");
+                    $('.messages').html('');
                     $('.top_menu .title').text(currentname);
                     $('.chat_window').show(500);
                     for (var msg in messages[name]) {
@@ -116,6 +128,7 @@ $(document).ready(function() {
                             msg.append(wra);
                             msgbox.append(msg);
                         } else {
+                            alert(messages[name][msg].content);
                             var msg = $('<li class="message right appeared"></li>')
                                 .append($('<div class="avatar"></div>'));
                             var wra = $('<div class="text_wrapper"></div>').append($('<div class="text">' + messages[name][msg].content + '</div>'));
@@ -126,6 +139,16 @@ $(document).ready(function() {
                 }
             });
         });
+
+        $('span.delete').each(function () {
+            $(this).click(function () {
+                var deletename = $(this).siblings('.name').text();
+                if(confirm('Delete Friend: '+deletename+' ?')) {
+                    socket.emit('deletefriend',{sender:myname,receiver:deletename});
+                }
+            });
+        });
+
 
         $('#accept-adding').click(function () {
             response.receivergroup = $('#acceptGroupName').val();
@@ -198,7 +221,7 @@ $(document).ready(function() {
                 msgbox.append(msg);
             }
             messages[newmsg.sender].push(newmsg);
-            $('.messages').scrollTop(1000000);
+            $('.messages').scrollTop(10000);
         });
 
     });
